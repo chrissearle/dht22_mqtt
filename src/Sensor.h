@@ -12,14 +12,24 @@
 class Sensor
 {
 private:
-  char *sensor_name;
-  byte sensor_pin;
+  char *sensorName;
   DHT *dht;
 
 public:
-  Sensor(const char *name, byte pin);
+  Sensor(const char *name, byte pin)
+  {
+    sensorName = (char *)malloc(strlen(name) + 1);
+    memset(sensorName, 0, strlen(name) + 1);
+    memcpy(sensorName, name, strlen(name));
+    Serial.println(sensorName);
+
+    dht = new DHT(pin, DHT22);
+
+    dht->begin();
+  };
 
   char *getName();
+
   float getTemperature();
   float getHumidity();
 };

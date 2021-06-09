@@ -10,20 +10,16 @@
 #include "Board.h"
 #include "Sensor.h"
 
+#define SENDMQ 1
+
 #define DHTTYPE DHT22
 
 #define LOUNGE 0
 #define BEDROOM 1
 #define DINING 2
-#define KITCHEN 3
-#define BEDROOM2 4
-#define BEDROOM3 5
-#define CELLAR 6
-#define STORE 7
-#define HALL 8
-#define BATHROOM 9
+#define CELLAR 3
 
-#define BOARD DINING
+#define BOARD LOUNGE
 
 Board *board = NULL;
 
@@ -48,14 +44,7 @@ void setup()
 
   case BEDROOM:
     board = new Board("bedroom", wifiClient);
-    board->addSensor(new Sensor("bedroom1", D1));
-    board->addSensor(new Sensor("hallway", D2));
-    break;
-
-  case KITCHEN:
-    board = new Board("kitchen", wifiClient);
-    board->addSensor(new Sensor("kitchen", D1));
-    board->addSensor(new Sensor("short_hall", D2));
+    board->addSensor(new Sensor("bedroom", D1));
     break;
 
   case DINING:
@@ -63,36 +52,9 @@ void setup()
     board->addSensor(new Sensor("dining_room", D1));
     break;
 
-  case BEDROOM2:
-    board = new Board("bedroom2", wifiClient);
-    board->addSensor(new Sensor("bedroom2", D1));
-    break;
-
-  case BEDROOM3:
-    board = new Board("bedroom3", wifiClient);
-    board->addSensor(new Sensor("bedroom3", D1));
-    break;
-
   case CELLAR:
     board = new Board("cellar", wifiClient);
     board->addSensor(new Sensor("cellar", D1));
-    break;
-
-  case STORE:
-    board = new Board("store", wifiClient);
-    board->addSensor(new Sensor("store_room", D1));
-    board->addSensor(new Sensor("store_hall", D1));
-    board->addSensor(new Sensor("workshop", D1));
-    break;
-
-  case HALL:
-    board = new Board("hall", wifiClient);
-    board->addSensor(new Sensor("entry_hall", D1));
-    break;
-
-  case BATHROOM:
-    board = new Board("bathroom", wifiClient);
-    board->addSensor(new Sensor("bathroom", D1));
     break;
   }
 }

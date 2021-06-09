@@ -1,19 +1,8 @@
-
 #include <PubSubClient.h>
 
+#include "Configuration.h"
 #include "Board.h"
 #include "Sensor.h"
-#include "Configuration.h"
-
-#define SENDMQ 1
-
-Board::Board(const char *name, Client &client)
-{
-    clientName = strdup(name);
-
-    pubSubClient = new PubSubClient(client);
-    pubSubClient->setServer(MQTT_SERVER, 1883);
-}
 
 void Board::reconnect()
 {
@@ -21,7 +10,7 @@ void Board::reconnect()
     {
         Serial.print("Attempting MQTT connection...");
 
-        String clientId = String("Arduino-DHT-" + String(clientName));
+        String clientId = String("DHT-" + String(clientName));
 
         if (pubSubClient->connect(clientId.c_str(), MQTT_USER, MQTT_PASSWORD))
         {
@@ -60,16 +49,29 @@ void Board::publish()
     {
         Sensor *sensor = sensorList[i];
 
-        char msg[100];
+        const char *sensorName = sensor->getName();
 
-        snprintf(msg, 100, "{ \"location\": \"%s\", \"temperature\": %f, \"humidity\": %f }", sensor->getName(), sensor->getTemperature(), sensor->getHumidity());
-        Serial.print("Publish message: ");
-        Serial.println(msg);
+        publishToTopic(sensorName, "temperature", sensor->getTemperature());
+        publishToTopic(sensorName, "humidity", sensor->getHumidity());
+    }
+}
+
+void Board::publishToTopic(const char *topicName, const char *topicType, float value)
+{
+  char *publishTopic = (char *)malloc(50);
+  
+  memset(publishTopic, 0, 50);
+
+  sprintf(publishTopic, "%s/%s/%s", MQTT_TOPIC, topicName, topicType);
 
 #if SENDMQ
-        pubSubClient->publish(MQTT_TOPIC, msg);
-#else
-        Serial.println("MQ not enabled");
+    Serial.println("Posting");
+    char charVal[10];
+    dtostrf(value, 4, 4, charVal);
+    pubSubClient->publish(publishTopic, charVal);
 #endif
-    }
+
+    Serial.print(publishTopic);
+    Serial.print(" ");
+    Serial.println(value);
 }

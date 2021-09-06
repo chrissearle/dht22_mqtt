@@ -8,6 +8,7 @@
 #endif
 
 #include <PubSubClient.h>
+#include <ArduinoLog.h>
 
 #include "Configuration.h"
 #include "Sensor.h"
@@ -29,7 +30,8 @@ public:
     clientName = (char *)malloc(strlen(name) + 1);
     memset(clientName, 0, strlen(name) + 1);
     memcpy(clientName, name, strlen(name));
-    Serial.println(clientName);
+
+    Log.noticeln("Initializing %s", clientName);
 
     pubSubClient = new PubSubClient(client);
     pubSubClient->setServer(MQTT_SERVER, 1883);

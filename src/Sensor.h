@@ -8,6 +8,7 @@
 #endif
 
 #include <DHT.h>
+#include<ArduinoLog.h>
 
 class Sensor
 {
@@ -21,7 +22,8 @@ public:
     sensorName = (char *)malloc(strlen(name) + 1);
     memset(sensorName, 0, strlen(name) + 1);
     memcpy(sensorName, name, strlen(name));
-    Serial.println(sensorName);
+
+    Log.noticeln("Initializing sensor %s", sensorName);
 
     dht = new DHT(pin, DHT22);
 

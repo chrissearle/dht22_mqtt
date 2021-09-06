@@ -1,4 +1,5 @@
 #include <PubSubClient.h>
+#include <ArduinoLog.h>
 
 #include "Configuration.h"
 #include "Board.h"
@@ -8,19 +9,17 @@ void Board::reconnect()
 {
     while (!pubSubClient->connected())
     {
-        Serial.print("Attempting MQTT connection...");
+        Log.noticeln("Attempting MQTT connection...");
 
         String clientId = String("DHT-" + String(clientName));
 
         if (pubSubClient->connect(clientId.c_str(), MQTT_USER, MQTT_PASSWORD))
         {
-            Serial.println("connected");
+            Log.noticeln("connected");
         }
         else
         {
-            Serial.print("failed, rc=");
-            Serial.print(pubSubClient->state());
-            Serial.println(" try again in 5 seconds");
+            Log.warningln("failed, rc=%d try again in 5 seconds", pubSubClient->state());
             // Wait 5 seconds before retrying
             delay(5000);
         }
@@ -65,13 +64,11 @@ void Board::publishToTopic(const char *topicName, const char *topicType, float v
   sprintf(publishTopic, "%s/%s/%s", MQTT_TOPIC, topicName, topicType);
 
 #if SENDMQ
-    Serial.println("Posting");
+    Log.noticeln("Posting");
     char charVal[10];
     dtostrf(value, 4, 4, charVal);
     pubSubClient->publish(publishTopic, charVal);
 #endif
 
-    Serial.print(publishTopic);
-    Serial.print(" ");
-    Serial.println(value);
+    Log.noticeln("%s %F", publishTopic, value);
 }

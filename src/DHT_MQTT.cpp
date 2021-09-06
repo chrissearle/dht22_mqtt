@@ -7,6 +7,8 @@
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>
 
+#include <ArduinoLog.h>
+
 #include "Board.h"
 #include "Sensor.h"
 
@@ -30,6 +32,8 @@ long lastMsg = 0;
 void setup()
 {
   Serial.begin(115200);
+
+  Log.begin(LOG_LEVEL_VERBOSE, &Serial);
 
   WiFiManager wifiManager;
 
@@ -57,6 +61,8 @@ void setup()
     board->addSensor(new Sensor("cellar", D1));
     break;
   }
+
+  Log.noticeln("Setup complete");
 }
 
 void loop()
